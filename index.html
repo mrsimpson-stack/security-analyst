@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced SIM Management Tool</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --danger: #ef233c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Auth Forms */
+        .auth-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: auto;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .auth-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+            transition: all 0.3s ease;
+        }
+        
+        .auth-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .auth-header h2 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .auth-body {
+            padding: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+            outline: none;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        .auth-footer {
+            text-align: center;
+            padding: 1rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            width: 100%;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: white;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem 0;
+        }
+        
+        .sidebar-header {
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .sidebar-header h3 {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .sidebar-menu {
+            padding: 1.5rem 0;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.5rem;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .menu-item i {
+            margin-right: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            flex: 1;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 1rem;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            color: var(--dark);
+        }
+        
+        .modal-header .close {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-success {
+            background: var(--success);
+        }
+        
+        .btn-success:hover {
+            background: #3aa8d8;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-success {
+            background: rgba(76, 201, 240, 0.2);
+            border-left: 4px solid var(--success);
+            color: #0a6c8c;
+        }
+        
+        .payment-proof {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        
+        .payment-proof img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        /* Welcome Popup */
+        .welcome-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1100;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: popupFadeIn 0.5s;
+        }
+        
+        @keyframes popupFadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -40px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+        
+        .welcome-popup i {
+            font-size: 3rem;
+            color: var(--success);
+            margin-bottom: 1rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Auth Container -->
+    <div class="container" id="auth-container">
+        <div class="auth-container">
+            <div class="auth-card" id="login-card">
+                <div class="auth-header">
+                    <h2>Login</h2>
+                    <p>Access your SIM management dashboard</p>
+                </div>
+                <div class="auth-body">
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="login-username">Username</label>
+                            <input type="text" id="login-username" class="form-control" placeholder="Enter your username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" class="form-control" placeholder="Enter your password" required>
+                        </div>
+                        <button type="submit" class="btn">Login</button>
+                    </form>
+                </div>
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="#" id="show-register">Register</a></p>
+                </div>
+            </div>
+            
+            <div class="auth-card" id="register-card" style="display: none;">
+                <div class="auth-header">
+                    <h2>Register</h2>
+                    <p>Create your SIM management account</p>
+                </div>
+                <div class="auth-body">
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label for="register-username">Username</label>
+                            <input type="text" id="register-username" class="form-control" placeholder="Choose a username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-email">Email</label>
+                            <input type="email" id="register-email" class="form-control" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-password">Password</label>
+                            <input type="password" id="register-password" class="form-control" placeholder="Create a password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="register-confirm">Confirm Password</label>
+                            <input type="password" id="register-confirm" class="form-control" placeholder="Confirm your password" required>
+                        </div>
+                        <button type="submit" class="btn">Register</button>
+                    </form>
+                </div>
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="#" id="show-login">Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>SIM Manager Pro</h3>
+            </div>
+            <div class="sidebar-menu">
+                <a href="#" class="menu-item active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="#" class="menu-item" data-section="pin-reset">
+                    <i class="fas fa-key"></i> PIN Reset
+                </a>
+                <a href="#" class="menu-item" data-section="forgot-pin">
+                    <i class="fas fa-question-circle"></i> Forgot PIN
+                </a>
+                <a href="#" class="menu-item" data-section="block-number">
+                    <i class="fas fa-ban"></i> Block Number
+                </a>
+                <a href="#" class="menu-item" data-section="unblock-number">
+                    <i class="fas fa-check-circle"></i> Unblock Number
+                </a>
+                <a href="#" class="menu-item" data-section="no-tracking">
+                    <i class="fas fa-user-secret"></i> No Tracking
+                </a>
+                <a href="#" class="menu-item" data-section="no-reversals">
+                    <i class="fas fa-exchange-alt"></i> No Reversals
+                </a>
+                <a href="#" class="menu-item" data-section="request-money">
+                    <i class="fas fa-hand-holding-usd"></i> Request Money
+                </a>
+                <a href="#" class="menu-item" data-section="contact-admin">
+                    <i class="fas fa-headset"></i> Contact Admin
+                </a>
+                <a href="#" class="menu-item" data-section="reversal">
+                    <i class="fas fa-undo"></i> Reversal
+                </a>
+                <a href="#" class="menu-item" data-section="deny-reversal">
+                    <i class="fas fa-times-circle"></i> Deny Reversal
+                </a>
+                <a href="#" class="menu-item" data-section="no-requests">
+                    <i class="fas fa-bell-slash"></i> No Requests
+                </a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <h2 id="section-title">Dashboard</h2>
+                <div class="user-info">
+                    <img src="https://ui-avatars.com/api/?name=User&background=random" alt="User">
+                    <span>Welcome, <span id="username-display">User</span></span>
+                </div>
+            </div>
+            
+            <div id="dashboard-section">
+                <div class="card-grid">
+                    <div class="card" data-action="pin-reset">
+                        <i class="fas fa-key"></i>
+                        <h3>PIN Reset</h3>
+                        <p>Reset your SIM card PIN securely</p>
+                    </div>
+                    <div class="card" data-action="forgot-pin">
+                        <i class="fas fa-question-circle"></i>
+                        <h3>Forgot PIN</h3>
+                        <p>Recover your forgotten PIN</p>
+                    </div>
+                    <div class="card" data-action="block-number">
+                        <i class="fas fa-ban"></i>
+                        <h3>Block Number</h3>
+                        <p>Block any phone number</p>
+                    </div>
+                    <div class="card" data-action="unblock-number">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Unblock Number</h3>
+                        <p>Unblock a previously blocked number</p>
+                    </div>
+                    <div class="card" data-action="no-tracking">
+                        <i class="fas fa-user-secret"></i>
+                        <h3>No Tracking</h3>
+                        <p>Make your SIM untraceable</p>
+                    </div>
+                    <div class="card" data-action="no-reversals">
+                        <i class="fas fa-exchange-alt"></i>
+                        <h3>No Reversals</h3>
+                        <p>Prevent transaction reversals</p>
+                    </div>
+                    <div class="card" data-action="request-money">
+                        <i class="fas fa-hand-holding-usd"></i>
+                        <h3>Request Money</h3>
+                        <p>Request money back from transactions</p>
+                    </div>
+                    <div class="card" data-action="contact-admin">
+                        <i class="fas fa-headset"></i>
+                        <h3>Contact Admin</h3>
+                        <p>Get support from our team</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Other sections will be loaded here dynamically -->
+            <div id="dynamic-section" style="display: none;"></div>
+        </div>
+    </div>
+    
+    <!-- Welcome Popup -->
+    <div class="welcome-popup" id="welcome-popup" style="display: none;">
+        <i class="fas fa-check-circle"></i>
+        <h2>Thanks For Signing Up</h2>
+        <p>Use this tool with no ID, Only for Education purposes</p>
+    </div>
+    
+    <!-- Payment Modal -->
+    <div class="modal" id="payment-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="payment-title">Subscription Required</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="payment-instructions">
+                    <p>To use this tool, you need an active subscription. Please send 5,000 UGX to:</p>
+                    <div class="payment-proof">
+                        <p><strong>Number:</strong> 0764803976</p>
+                        <p><strong>Name:</strong> Tumugabirwe Fudensia</p>
+                        <img src="https://via.placeholder.com/300x150?text=Payment+Proof+Example" alt="Payment Proof">
+                    </div>
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label for="payment-number">Enter your payment number</label>
+                        <input type="text" id="payment-number" class="form-control" placeholder="Your phone number used for payment" required>
+                    </div>
+                </div>
+                <div id="payment-processing" style="display: none;">
+                    <div class="alert alert-success">
+                        <i class="fas fa-spinner fa-spin"></i> Wait, your number is being verified...
+                    </div>
+                    <p>Please wait while we verify your payment. This may take a few minutes.</p>
+                    <p><strong>Use this tool to avoid scammers</strong></p>
+                </div>
+                <div id="payment-success" style="display: none;">
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i> Payment verified successfully!
+                    </div>
+                    <p>You can now access all features of the SIM Management Tool.</p>
+                    <div id="service-form" style="margin-top: 1rem;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-btn">Cancel</button>
+                <button type="button" class="btn btn-success" id="verify-payment">Submit & Verify</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Service Modal -->
+    <div class="modal" id="service-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="service-title">Service Request</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="service-form-container">
+                    <!-- Dynamic form will be inserted here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-btn">Cancel</button>
+                <button type="button" class="btn btn-success" id="submit-service">Submit Request</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // DOM Elements
+        const loginCard = document.getElementById('login-card');
+        const registerCard = document.getElementById('register-card');
+        const showRegister = document.getElementById('show-register');
+        const showLogin = document.getElementById('show-login');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const authContainer = document.getElementById('auth-container');
+        const dashboard = document.getElementById('dashboard');
+        const welcomePopup = document.getElementById('welcome-popup');
+        const paymentModal = document.getElementById('payment-modal');
+        const serviceModal = document.getElementById('service-modal');
+        const verifyPaymentBtn = document.getElementById('verify-payment');
+        const paymentProcessing = document.getElementById('payment-processing');
+        const paymentInstructions = document.getElementById('payment-instructions');
+        const paymentSuccess = document.getElementById('payment-success');
+        const serviceFormContainer = document.getElementById('service-form-container');
+        const usernameDisplay = document.getElementById('username-display');
+        
+        // Toggle between login and register forms
+        showRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginCard.style.display = 'none';
+            registerCard.style.display = 'block';
+        });
+        
+        showLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            registerCard.style.display = 'none';
+            loginCard.style.display = 'block';
+        });
+        
+        // Login form submission
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value;
+            usernameDisplay.textContent = username;
+            
+            // Show dashboard
+            authContainer.style.display = 'none';
+            dashboard.style.display = 'flex';
+            
+            // Show welcome popup
+            welcomePopup.style.display = 'block';
+            
+            // Hide welcome popup after 5 seconds
+            setTimeout(() => {
+                welcomePopup.style.display = 'none';
+            }, 5000);
+        });
+        
+        // Register form submission
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('register-username').value;
+            usernameDisplay.textContent = username;
+            
+            // Show dashboard
+            authContainer.style.display = 'none';
+            dashboard.style.display = 'flex';
+            
+            // Show welcome popup
+            welcomePopup.style.display = 'block';
+            
+            // Hide welcome popup after 5 seconds
+            setTimeout(() => {
+                welcomePopup.style.display = 'none';
+            }, 5000);
+        });
+        
+        // Dashboard functionality
+        const menuItems = document.querySelectorAll('.menu-item');
+        const cards = document.querySelectorAll('.card');
+        const dashboardSection = document.getElementById('dashboard-section');
+        const dynamicSection = document.getElementById('dynamic-section');
+        const sectionTitle = document.getElementById('section-title');
+        
+        // Menu item click handler
+        menuItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = item.getAttribute('data-section');
+                
+                // Update active menu item
+                menuItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Show the selected section
+                showSection(section);
+            });
+        });
+        
+        // Card click handler
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                const action = card.getAttribute('data-action');
+                showPaymentModal(action);
+            });
+        });
+        
+        // Show section content
+        function showSection(section) {
+            if (section === 'dashboard') {
+                dashboardSection.style.display = 'block';
+                dynamicSection.style.display = 'none';
+                sectionTitle.textContent = 'Dashboard';
+            } else {
+                dashboardSection.style.display = 'none';
+                dynamicSection.style.display = 'block';
+                dynamicSection.innerHTML = `<h3>${capitalizeFirstLetter(section.replace('-', ' '))}</h3>
+                                            <p>This is the ${section.replace('-', ' ')} section. Select an action from the cards below.</p>
+                                            <div class="card-grid" style="margin-top: 2rem;"></div>`;
+                
+                sectionTitle.textContent = capitalizeFirstLetter(section.replace('-', ' '));
+                
+                // Add cards to dynamic section (simplified for demo)
+                const cardGrid = dynamicSection.querySelector('.card-grid');
+                cardGrid.innerHTML = `
+                    <div class="card" data-action="${section}">
+                        <i class="${getIconForSection(section)}"></i>
+                        <h3>${capitalizeFirstLetter(section.replace('-', ' '))}</h3>
+                        <p>Perform ${section.replace('-', ' ')} action</p>
+                    </div>
+                `;
+                
+                // Add click handler to new card
+                cardGrid.querySelector('.card').addEventListener('click', () => {
+                    showPaymentModal(section);
+                });
+            }
+        }
+        
+        // Get icon for section
+        function getIconForSection(section) {
+            const icons = {
+                'pin-reset': 'fas fa-key',
+                'forgot-pin': 'fas fa-question-circle',
+                'block-number': 'fas fa-ban',
+                'unblock-number': 'fas fa-check-circle',
+                'no-tracking': 'fas fa-user-secret',
+                'no-reversals': 'fas fa-exchange-alt',
+                'request-money': 'fas fa-hand-holding-usd',
+                'contact-admin': 'fas fa-headset',
+                'reversal': 'fas fa-undo',
+                'deny-reversal': 'fas fa-times-circle',
+                'no-requests': 'fas fa-bell-slash'
+            };
+            return icons[section] || 'fas fa-cog';
+        }
+        
+        // Capitalize first letter
+        function capitalizeFirstLetter(string) {
+            return string.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+        
+        // Show payment modal
+        function showPaymentModal(action) {
+            const modal = document.getElementById('payment-modal');
+            const title = document.getElementById('payment-title');
+            
+            // Reset modal state
+            paymentInstructions.style.display = 'block';
+            paymentProcessing.style.display = 'none';
+            paymentSuccess.style.display = 'none';
+            
+            // Set title based on action
+            title.textContent = `${capitalizeFirstLetter(action.replace('-', ' '))} - Subscription Required`;
+            
+            // Show modal
+            modal.style.display = 'flex';
+            
+            // Store current action
+            modal.setAttribute('data-action', action);
+        }
+        
+        // Verify payment
+        verifyPaymentBtn.addEventListener('click', () => {
+            const paymentNumber = document.getElementById('payment-number').value;
+            
+            if (!paymentNumber) {
+                alert('Please enter your payment number');
+                return;
+            }
+            
+            // Show processing
+            paymentInstructions.style.display = 'none';
+            paymentProcessing.style.display = 'block';
+            
+            // Simulate verification (in real app, this would be an API call)
+            setTimeout(() => {
+                paymentProcessing.style.display = 'none';
+                paymentSuccess.style.display = 'block';
+                
+                // Show service form
+                const action = paymentModal.getAttribute('data-action');
+                showServiceForm(action);
+            }, 3000);
+        });
+        
+        // Show service form
+        function showServiceForm(action) {
+            const serviceForm = document.getElementById('service-form');
+            
+            let formHTML = '';
+            let title = capitalizeFirstLetter(action.replace('-', ' '));
+            
+            switch(action) {
+                case 'pin-reset':
+                    formHTML = `
+                        <div class="form-group">
+                            <label for="phone-number">Phone Number</label>
+                            <input type="text" id="phone-number" class="form-control" placeholder="Enter phone number to reset PIN" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="new-pin">New PIN (4 digits)</label>
+                            <input type="password" id="new-pin" class="form-control" placeholder="Enter new PIN" maxlength="4" required>
+                        </div>
+                    `;
+                    break;
+                case 'block-number':
+                    formHTML = `
+                        <div class="form-group">
+                            <label for="block-number">Phone Number to Block</label>
+                            <input type="text" id="block-number" class="form-control" placeholder="Enter phone number to block" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="block-reason">Reason (Optional)</label>
+                            <textarea id="block-reason" class="form-control" placeholder="Enter reason for blocking"></textarea>
+                        </div>
+                    `;
+                    break;
+                case 'request-money':
+                    formHTML = `
+                        <div class="form-group">
+                            <label for="request-amount">Amount</label>
+                            <input type="number" id="request-amount" class="form-control" placeholder="Enter amount to request back" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="request-transaction">Transaction ID</label>
+                            <input type="text" id="request-transaction" class="form-control" placeholder="Enter transaction ID" required>
+                        </div>
+                    `;
+                    break;
+                default:
+                    formHTML = `
+                        <div class="form-group">
+                            <label for="service-number">Phone Number</label>
+                            <input type="text" id="service-number" class="form-control" placeholder="Enter phone number" required>
+                        </div>
+                    `;
+            }
+            
+            serviceForm.innerHTML = `
+                <h4>${title} Request</h4>
+                ${formHTML}
+                <button type="button" class="btn" id="submit-service-request" style="margin-top: 1rem;">Submit ${title} Request</button>
+            `;
+            
+            // Add submit handler
+            document.getElementById('submit-service-request').addEventListener('click', () => {
+                alert(`${title} request submitted successfully!`);
+                closeModal(paymentModal);
+            });
+        }
+        
+        // Show service modal (for users who have already paid)
+        function showServiceModal(action) {
+            const title = document.getElementById('service-title');
+            title.textContent = capitalizeFirstLetter(action.replace('-', ' '));
+            
+            let formHTML = '';
+            
+            switch(action) {
+                case 'pin-reset':
+                    formHTML = `
+                        <div class="form-group">
+                            <label for="service-phone-number">Phone Number</label>
+                            <input type="text" id="service-phone-number" class="form-control" placeholder="Enter phone number to reset PIN" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="service-new-pin">New PIN (4 digits)</label>
+                            <input type="password" id="service-new-pin" class="form-control" placeholder="Enter new PIN" maxlength="4" required>
+                        </div>
+                    `;
+                    break;
+                case 'block-number':
+                    formHTML = `
+                        <div class="form-group">
+                            <label for="service-block-number">Phone Number to Block</label>
+                            <input type="text" id="service-block-number" class="form-control" placeholder="Enter phone number to block" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="service-block-reason">Reason (Optional)</label>
+                            <textarea id="service-block-reason" class="form-control" placeholder="Enter reason for blocking"></textarea>
+                        </div>
+                    `;
+                    break;
+                default:
+                    formHTML = `
+                        <div class="form-group">
+                            <label for="service-generic-number">Phone Number</label>
+                            <input type="text" id="service-generic-number" class="form-control" placeholder="Enter phone number" required>
+                        </div>
+                    `;
+            }
+            
+            serviceFormContainer.innerHTML = formHTML;
+            serviceModal.style.display = 'flex';
+            serviceModal.setAttribute('data-action', action);
+        }
+        
+        // Submit service request
+        document.getElementById('submit-service').addEventListener('click', () => {
+            const action = serviceModal.getAttribute('data-action');
+            alert(`${capitalizeFirstLetter(action.replace('-', ' '))} request submitted successfully!`);
+            closeModal(serviceModal);
+        });
+        
+        // Close modal
+        function closeModal(modal) {
+            modal.style.display = 'none';
+        }
+        
+        // Close modals when clicking X or outside
+        document.querySelectorAll('.close, .close-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.modal');
+                closeModal(modal);
+            });
+        });
+        
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                closeModal(e.target);
+            }
+        });
+        
+        // For demo purposes - simulate already paid user
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'p' && e.ctrlKey) {
+                // Ctrl+P to simulate paid user
+                cards.forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const action = card.getAttribute('data-action');
+                        showServiceModal(action);
+                    });
+                });
+                alert('Demo mode: Now simulating paid user experience. Click any service to access it directly.');
+            }
+        });
+    </script>
+</body>
+</html>
