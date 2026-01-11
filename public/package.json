@@ -1,0 +1,14 @@
+{
+  "name": "whatsapp-linker",
+  "version": "1.0.0",
+  "main": "api/generate.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": "18.x"
+  }
+}
