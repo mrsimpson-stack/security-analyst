@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Linker - Connect Your WhatsApp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .whatsapp-gradient { background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); }
+        .glass-effect { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .code-font { font-family: 'Courier New', monospace; letter-spacing: 3px; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 to-gray-800 text-white min-h-screen">
+    <!-- Navigation -->
+    <nav class="container mx-auto px-6 py-4">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="whatsapp-gradient w-10 h-10 rounded-xl flex items-center justify-center">
+                    <i class="fab fa-whatsapp text-white text-xl"></i>
+                </div>
+                <span class="text-xl font-bold">WhatsApp Linker</span>
+            </div>
+            <div class="space-x-4">
+                <a href="/session" class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700">
+                    <i class="fas fa-sign-in-alt"></i> Enter Session ID
+                </a>
+                <a href="/dashboard" class="px-4 py-2 rounded-lg whatsapp-gradient hover:opacity-90">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="container mx-auto px-6 py-12">
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold mb-4">Connect WhatsApp to Web</h1>
+            <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                Generate pairing codes to link your WhatsApp. Access messages from any browser.
+                Works for all countries including Uganda (+256).
+            </p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="max-w-2xl mx-auto">
+            <div class="glass-effect rounded-2xl p-8 shadow-2xl">
+                <!-- Step Indicator -->
+                <div class="flex justify-center mb-8">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full whatsapp-gradient flex items-center justify-center">
+                            <span class="font-bold">1</span>
+                        </div>
+                        <div class="h-1 w-20 bg-gray-600 mx-4"></div>
+                        <div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
+                            <span class="text-gray-400">2</span>
+                        </div>
+                        <div class="h-1 w-20 bg-gray-600 mx-4"></div>
+                        <div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
+                            <span class="text-gray-400">3</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Enter Details -->
+                <div id="step1">
+                    <h2 class="text-2xl font-bold mb-6 text-center">
+                        <i class="fas fa-mobile-alt text-green-400"></i> Enter Your Details
+                    </h2>
+                    
+                    <div class="space-y-6">
+                        <!-- Country Selection -->
+                        <div>
+                            <label class="block text-gray-300 mb-2">Select Country</label>
+                            <div class="grid grid-cols-4 gap-2">
+                                <button onclick="selectCountry('UG')" class="country-btn active p-3 rounded-lg bg-green-600">
+                                    🇺🇬 Uganda +256
+                                </button>
+                                <button onclick="selectCountry('KE')" class="country-btn p-3 rounded-lg bg-gray-800 hover:bg-gray-700">
+                                    🇰🇪 Kenya +254
+                                </button>
+                                <button onclick="selectCountry('TZ')" class="country-btn p-3 rounded-lg bg-gray-800 hover:bg-gray-700">
+                                    🇹🇿 Tanzania +255
+                                </button>
+                                <button onclick="selectCountry('RW')" class="country-btn p-3 rounded-lg bg-gray-800 hover:bg-gray-700">
+                                    🇷🇼 Rwanda +250
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Phone Input -->
+                        <div>
+                            <label class="block text-gray-300 mb-2">WhatsApp Number</label>
+                            <div class="flex">
+                                <div id="countryCode" class="bg-gray-800 p-4 rounded-l-lg border-r border-gray-700">
+                                    <span id="prefix">+256</span>
+                                </div>
+                                <input type="tel" id="phoneNumber" 
+                                       class="flex-1 p-4 bg-gray-800 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                                       placeholder="712345678"
+                                       maxlength="10"
+                                       required>
+                            </div>
+                            <p class="text-sm text-gray-400 mt-2">Enter without country code</p>
+                        </div>
+
+                        <!-- Generate Button -->
+                        <button id="generateBtn" onclick="generateCode()"
+                                class="w-full whatsapp-gradient text-white p-4 rounded-xl font-bold text-lg hover:opacity-90 transition-all pulse">
+                            <i class="fas fa-key"></i> Generate Pairing Code
+                        </button>
+
+                        <div class="text-center">
+                            <a href="/session" class="text-green-400 hover:text-green-300">
+                                <i class="fas fa-sign-in-alt"></i> Already have a Session ID?
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Show Code -->
+                <div id="step2" class="hidden">
+                    <h2 class="text-2xl font-bold mb-6 text-center">
+                        <i class="fas fa-qrcode text-green-400"></i> Your Pairing Code
+                    </h2>
+                    
+                    <!-- Code Display -->
+                    <div class="text-center mb-8">
+                        <div class="code-font text-6xl font-bold text-white mb-6" id="pairingCode">
+                            XXXX-XXXX
+                        </div>
+                        
+                        <div class="flex justify-center space-x-4 mb-6">
+                            <button onclick="copyCode()" 
+                                    class="px-6 py-3 bg-blue-600 rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-copy"></i> Copy Code
+                            </button>
+                            <button onclick="copySessionId()" 
+                                    class="px-6 py-3 bg-purple-600 rounded-lg hover:bg-purple-700">
+                                <i class="fas fa-id-card"></i> Copy Session ID
+                            </button>
+                        </div>
+
+                        <!-- Timer -->
+                        <div class="text-gray-300 mb-4">
+                            <i class="fas fa-clock"></i> Expires in: 
+                            <span id="countdown" class="font-bold text-green-400 text-xl">05:00</span>
+                        </div>
+
+                        <!-- Session ID -->
+                        <div class="bg-gray-800 p-4 rounded-lg mb-6">
+                            <div class="text-sm text-gray-400 mb-2">Your Session ID (Save this):</div>
+                            <div id="sessionId" class="code-font text-lg text-green-400"></div>
+                        </div>
+                    </div>
+
+                    <!-- Instructions -->
+                    <div class="bg-gray-800 p-6 rounded-xl mb-6">
+                        <h4 class="font-bold text-white mb-4">
+                            <i class="fas fa-list-ol"></i> How to link your WhatsApp:
+                        </h4>
+                        <ol class="space-y-3 text-gray-300">
+                            <li class="flex items-start">
+                                <span class="bg-green-600 w-6 h-6 rounded-full flex items-center justify-center mr-3 mt-1">1</span>
+                                <span>Open WhatsApp on your phone</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="bg-green-600 w-6 h-6 rounded-full flex items-center justify-center mr-3 mt-1">2</span>
+                                <span>Tap <strong>Settings → Linked Devices</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="bg-green-600 w-6 h-6 rounded-full flex items-center justify-center mr-3 mt-1">3</span>
+                                <span>Tap <strong>"Link a Device"</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="bg-green-600 w-6 h-6 rounded-full flex items-center justify-center mr-3 mt-1">4</span>
+                                <span>Select <strong>"Link with phone number"</strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="bg-green-600 w-6 h-6 rounded-full flex items-center justify-center mr-3 mt-1">5</span>
+                                <span>Enter this code: <strong id="codeToEnter" class="text-green-400"></strong></span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="bg-green-600 w-6 h-6 rounded-full flex items-center justify-center mr-3 mt-1">6</span>
+                                <span>Tap <strong>"Link Device"</strong></span>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex space-x-4">
+                        <button onclick="verifyLinking()" 
+                                class="flex-1 whatsapp-gradient text-white p-4 rounded-xl font-bold text-lg hover:opacity-90">
+                            <i class="fas fa-check-circle"></i> I've Linked My WhatsApp
+                        </button>
+                        <button onclick="goBack()" 
+                                class="px-6 py-4 bg-gray-700 rounded-xl hover:bg-gray-600">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Success -->
+                <div id="step3" class="hidden">
+                    <div class="text-center py-8">
+                        <div class="w-24 h-24 bg-green-900 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-check text-green-400 text-4xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold mb-4">Successfully Linked! 🎉</h2>
+                        <p class="text-gray-300 mb-8">Your WhatsApp is now connected to the web</p>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-8">
+                            <a id="dashboardLink" href="#" 
+                               class="whatsapp-gradient text-white p-6 rounded-xl hover:opacity-90">
+                                <i class="fas fa-tachometer-alt text-2xl mb-3"></i>
+                                <div class="font-bold">Open Dashboard</div>
+                            </a>
+                            <a href="/session" 
+                               class="bg-gray-800 text-white p-6 rounded-xl hover:bg-gray-700">
+                                <i class="fas fa-history text-2xl mb-3"></i>
+                                <div class="font-bold">Session Manager</div>
+                            </a>
+                        </div>
+                        
+                        <button onclick="resetForm()" 
+                                class="text-gray-400 hover:text-white">
+                            <i class="fas fa-plus"></i> Link Another Device
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="max-w-4xl mx-auto mt-16">
+            <h2 class="text-3xl font-bold text-center mb-8">Complete WhatsApp Web Solution</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-effect p-6 rounded-xl">
+                    <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-comments text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Real Messaging</h3>
+                    <p class="text-gray-300">Send and receive WhatsApp messages from any browser</p>
+                </div>
+                <div class="glass-effect p-6 rounded-xl">
+                    <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-download text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Media Download</h3>
+                    <p class="text-gray-300">Download photos, videos, and documents from chats</p>
+                </div>
+                <div class="glass-effect p-6 rounded-xl">
+                    <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-robot text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Auto-Reply</h3>
+                    <p class="text-gray-300">Set automatic responses for incoming messages</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800 mt-16 py-8">
+        <div class="container mx-auto px-6 text-center text-gray-400">
+            <p>WhatsApp Linker • Works with all countries including Uganda (+256)</p>
+            <p class="mt-2">End-to-end encrypted • No message storage • Open Source</p>
+        </div>
+    </footer>
+
+    <script>
+        let currentSession = null;
+        let countdownInterval = null;
+        
+        // Country selection
+        function selectCountry(code) {
+            const prefixes = {
+                'UG': '+256', 'KE': '+254', 'TZ': '+255', 
+                'RW': '+250', 'NG': '+234', 'ZA': '+27'
+            };
+            
+            document.getElementById('prefix').textContent = prefixes[code] || '+256';
+            
+            // Update active button
+            document.querySelectorAll('.country-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-green-600');
+                btn.classList.add('bg-gray-800');
+            });
+            event.target.classList.add('active', 'bg-green-600');
+            event.target.classList.remove('bg-gray-800');
+        }
+        
+        // Generate pairing code
+        async function generateCode() {
+            const phone = document.getElementById('phoneNumber').value.trim();
+            const country = document.querySelector('.country-btn.active')?.getAttribute('onclick')?.match(/'([^']+)'/)?.[1] || 'UG';
+            
+            if (!phone || phone.length < 8) {
+                alert('Please enter a valid phone number (at least 8 digits)');
+                return;
+            }
+            
+            const btn = document.getElementById('generateBtn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phoneNumber: phone,
+                        countryCode: country
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentSession = data;
+                    
+                    // Update UI
+                    document.getElementById('pairingCode').textContent = data.formattedCode;
+                    document.getElementById('codeToEnter').textContent = data.formattedCode;
+                    document.getElementById('sessionId').textContent = data.sessionId;
+                    
+                    // Show step 2
+                    document.getElementById('step1').classList.add('hidden');
+                    document.getElementById('step2').classList.remove('hidden');
+                    
+                    // Start countdown
+                    startCountdown(data.expiresIn);
+                    
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to generate code. Please try again.');
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
+        }
+        
+        // Copy code
+        function copyCode() {
+            const code = document.getElementById('pairingCode').textContent;
+            navigator.clipboard.writeText(code);
+            alert('Code copied to clipboard!');
+        }
+        
+        // Copy session ID
+        function copySessionId() {
+            const sessionId = document.getElementById('sessionId').textContent;
+            navigator.clipboard.writeText(sessionId);
+            alert('Session ID copied! Save this for future access.');
+        }
+        
+        // Start countdown
+        function startCountdown(seconds) {
+            let remaining = seconds;
+            
+            function update() {
+                const minutes = Math.floor(remaining / 60);
+                const secs = remaining % 60;
+                document.getElementById('countdown').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                
+                if (remaining <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('countdown').textContent = 'Expired!';
+                    document.getElementById('countdown').classList.add('text-red-500');
+                }
+                remaining--;
+            }
+            
+            update();
+            countdownInterval = setInterval(update, 1000);
+        }
+        
+        // Verify linking
+        async function verifyLinking() {
+            const btn = document.querySelector('#step2 button');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        code: currentSession.code,
+                        sessionId: currentSession.sessionId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update dashboard link
+                    const dashboardLink = document.getElementById('dashboardLink');
+                    dashboardLink.href = `/dashboard?session=${currentSession.sessionId}`;
+                    
+                    // Show success
+                    document.getElementById('step2').classList.add('hidden');
+                    document.getElementById('step3').classList.remove('hidden');
+                    clearInterval(countdownInterval);
+                    
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Verification failed. Make sure you entered the code in WhatsApp.');
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
+        }
+        
+        // Go back
+        function goBack() {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+            clearInterval(countdownInterval);
+        }
+        
+        // Reset form
+        function resetForm() {
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+            document.getElementById('phoneNumber').value = '';
+            currentSession = null;
+        }
+        
+        // Auto-select Uganda
+        window.onload = function() {
+            selectCountry('UG');
+            document.getElementById('phoneNumber').focus();
+        };
+    </script>
+</body>
+</html>
